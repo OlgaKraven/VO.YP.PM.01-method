@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Методические рекомендации — Базовый C# и проектирование</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- PlantUML encoder and renderer (requires internet access when viewing) -->
+  <script src="https://unpkg.com/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
+  <script>
+    // Render all <pre class="plantuml"> blocks into <img> via PlantUML server
+    document.addEventListener('DOMContentLoaded', () => {
+      const server = 'https://www.plantuml.com/plantuml/png/';
+      document.querySelectorAll('pre.plantuml').forEach(block => {
+        const txt = block.textContent.trim();
+        try {
+          const encoded = plantumlEncoder.encode(txt);
+          const img = document.createElement('img');
+          img.alt = 'UML diagram';
+          img.loading = 'lazy';
+          img.src = server + encoded;
+          block.replaceWith(img);
+        } catch (e) {
+          console.warn('PlantUML encode error:', e);
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Методические рекомендации</h1>
+      <div class="subtitle">Базовые понятия C#, структурное и ОО-программирование, UML и отладка</div>
+      <nav>
+        <a href="#lifecycle">Жизненный цикл ПО</a>
+        <a href="#struct">Структурное программирование</a>
+        <a href="#oop">ООП</a>
+        <a href="#types">Типы данных</a>
+        <a href="#flow">Ветвления и циклы</a>
+        <a href="#functions">Функции и методы</a>
+        <a href="#arrays">Массивы и строки</a>
+        <a href="#uml">UML и проектирование</a>
+        <a href="#debug">Отладка и тестирование</a>
+        <a href="#reuse">Структуризация кода</a>
+        <a href="#assignment">Выполнение задания</a>
+      </nav>
+      <div class="chips">
+        <span class="chip">C#</span>
+        <span class="chip">.NET</span>
+        <span class="chip">Visual Studio</span>
+        <span class="chip">VS Code</span>
+        <span class="chip">UML</span>
+      </div>
+    </header>
+
+    <section id="theory">
+      <h2>1. Теория</h2>
+      <p>В этом документе собраны краткие методические рекомендации для начального курса по программированию на C#, охватывающие ключевые этапы жизненного цикла программного обеспечения, принципы структурного и объектно-ориентированного подходов, базовые средства языка и приёмы проектирования.</p>
+    </section>
+
+    <section id="lifecycle">
+      <h2>1.1. Этапы жизненного цикла программного обеспечения</h2>
+      <p><strong>Жизненный цикл ПО</strong> — это последовательность этапов, через которые проходит программный продукт от идеи до завершения эксплуатации.</p>
+      <div class="grid two">
+        <div>
+          <h3>Основные этапы</h3>
+          <ul class="kv">
+            <li><strong>Анализ требований.</strong> Выявление задач, потребностей пользователей, функциональных и нефункциональных требований. <em>Пример:</em> подготовка ТЗ для модуля «Учёт студентов» (ввод, поиск, сортировка).</li>
+            <li><strong>Проектирование.</strong> Определение архитектуры, модулей, интерфейсов, классов, структур данных. Применение UML-диаграмм (классов, прецедентов, последовательностей).</li>
+            <li><strong>Реализация (кодирование).</strong> Написание исходного кода на выбранном языке (C#), модульное тестирование.</li>
+            <li><strong>Тестирование.</strong> Проверка корректности и полноты реализации требований (юнит, интеграционные, системные тесты).</li>
+            <li><strong>Внедрение и эксплуатация.</strong> Передача пользователям, обучение, техподдержка.</li>
+            <li><strong>Сопровождение и модернизация.</strong> Исправления, добавление функций, оптимизация.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="note">
+            Совет: для учебных проектов фиксируйте артефакты каждого этапа — <em>ТЗ, диаграммы, README, тест-план, отчёт о внедрении</em>. Это облегчит проверку и дальнейшую поддержку.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="struct">
+      <h2>2. Принципы структурного программирования</h2>
+      <p><strong>Структурное программирование</strong> опирается на три базовые управляющие структуры: следование, ветвление и цикл. Код разбивается на логически завершённые функции и процедуры.</p>
+
+      <pre><code class="language-cs">using System;
+
+class Program
+{
+    static void Main()
+    {
+        int a = 10, b = 5;
+        if (a &gt; b)
+        {
+            Console.WriteLine("a больше b");
+        }
+        else
+        {
+            Console.WriteLine("a меньше или равно b");
+        }
+
+        for (int i = 1; i &lt;= 5; i++)
+        {
+            Console.WriteLine($"Итерация {i}");
+        }
+    }
+}</code></pre>
+
+      <ul class="kv">
+        <li>используйте управляющие структуры вместо <code>goto</code>;</li>
+        <li>соблюдайте модульность;</li>
+        <li>пишите читаемо и предсказуемо.</li>
+      </ul>
+    </section>
+
+    <section id="oop">
+      <h2>3. Основы объектно-ориентированного программирования (ООП)</h2>
+      <p>ООП рассматривает программу как совокупность взаимодействующих объектов.</p>
+
+      <h3>Инкапсуляция</h3>
+      <pre><code class="language-cs">class Student
+{
+    private string name;
+    public void SetName(string n) =&gt; name = n;
+    public string GetName() =&gt; name;
+}</code></pre>
+
+      <h3>Наследование</h3>
+      <pre><code class="language-cs">class Person
+{
+    public string Name { get; set; }
+}
+
+class Student : Person
+{
+    public string Group { get; set; }
+}</code></pre>
+
+      <h3>Полиморфизм</h3>
+      <pre><code class="language-cs">class Shape
+{
+    public virtual void Draw() =&gt; Console.WriteLine("Фигура");
+}
+
+class Circle : Shape
+{
+    public override void Draw() =&gt; Console.WriteLine("Круг");
+}
+
+class Square : Shape
+{
+    public override void Draw() =&gt; Console.WriteLine("Квадрат");
+}
+
+class Program
+{
+    static void Main()
+    {
+        Shape s = new Circle();
+        s.Draw();  // Выведет: Круг
+    }
+}</code></pre>
+    </section>
+
+    <section id="types">
+      <h2>4. Типы данных, переменные и выражения</h2>
+      <p>В C# каждый объект имеет тип, определяющий диапазон и допустимые операции.</p>
+
+      <h3>Категории типов</h3>
+      <div class="grid two">
+        <div>
+          <table style="width:100%; border-collapse:collapse; font-size:15px">
+            <thead>
+              <tr>
+                <th style="text-align:left; border-bottom:1px solid var(--line); padding:6px 4px">Категория</th>
+                <th style="text-align:left; border-bottom:1px solid var(--line); padding:6px 4px">Примеры</th>
+                <th style="text-align:left; border-bottom:1px solid var(--line); padding:6px 4px">Диапазон/значения</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding:6px 4px">Целые числа</td>
+                <td style="padding:6px 4px"><code>int</code>, <code>long</code>, <code>byte</code></td>
+                <td style="padding:6px 4px">от −2 147 483 648 до 2 147 483 647 (для <code>int</code>)</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 4px">Вещественные</td>
+                <td style="padding:6px 4px"><code>float</code>, <code>double</code>, <code>decimal</code></td>
+                <td style="padding:6px 4px">до 15–28 значащих цифр</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 4px">Логические</td>
+                <td style="padding:6px 4px"><code>bool</code></td>
+                <td style="padding:6px 4px"><code>true</code>, <code>false</code></td>
+              </tr>
+              <tr>
+                <td style="padding:6px 4px">Символьные</td>
+                <td style="padding:6px 4px"><code>char</code></td>
+                <td style="padding:6px 4px">один символ Unicode</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 4px">Строковые</td>
+                <td style="padding:6px 4px"><code>string</code></td>
+                <td style="padding:6px 4px">последовательность символов</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <pre><code class="language-cs">int age = 20;
+double price = 19.99;
+bool isActive = true;
+string name = "Иван";
+
+Console.WriteLine($"{name}, возраст: {age}");
+
+// Константы
+const double Pi = 3.14159;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="flow">
+      <h2>5. Управляющие конструкции: ветвления и циклы</h2>
+
+      <h3>Ветвления</h3>
+      <pre><code class="language-cs">if (x &gt; 0)
+    Console.WriteLine("Положительное");
+else if (x &lt; 0)
+    Console.WriteLine("Отрицательное");
+else
+    Console.WriteLine("Ноль");</code></pre>
+
+      <h3>Switch</h3>
+      <pre><code class="language-cs">switch (day)
+{
+    case 1: Console.WriteLine("Понедельник"); break;
+    case 2: Console.WriteLine("Вторник"); break;
+    default: Console.WriteLine("День не найден"); break;
+}</code></pre>
+
+      <h3>Циклы</h3>
+      <pre><code class="language-cs">for (int i = 0; i &lt; 5; i++) Console.WriteLine(i);
+while (count &lt; 10) count++;
+do { Console.WriteLine("Минимум одна итерация"); } while (false);</code></pre>
+    </section>
+
+    <section id="functions">
+      <h2>6. Функции и методы</h2>
+      <p>Методы позволяют структурировать код и избегать дублирования.</p>
+      <pre><code class="language-cs">static int Sum(int a, int b)
+{
+    return a + b;
+}
+
+static void Main()
+{
+    Console.WriteLine(Sum(3, 4)); // 7
+}
+
+// Передача по ссылке
+static void AddOne(ref int x) { x++; }</code></pre>
+    </section>
+
+    <section id="arrays">
+      <h2>7. Массивы и строки</h2>
+      <pre><code class="language-cs">int[] numbers = { 1, 2, 3, 4, 5 };
+foreach (int n in numbers)
+    Console.WriteLine(n);
+
+string text = "Hello";
+Console.WriteLine(text.Length);
+
+// Многомерный массив
+int[,] matrix = new int[2, 3] { { 1, 2, 3 }, { 4, 5, 6 } };</code></pre>
+    </section>
+
+    <section id="uml">
+      <h2>8. UML-диаграммы и проектирование программных модулей</h2>
+      <p>UML помогает визуализировать структуру и поведение программных систем.</p>
+
+      <h3>Диаграмма классов (упрощённый пример)</h3>
+      <pre><code>+------------------+
+|     Student      |
++------------------+
+| - name: string   |
+| - group: string  |
++------------------+
+| +GetInfo(): void |
++------------------+</code></pre>
+
+      <h3>Диаграмма последовательности (упрощённый пример)</h3>
+      <pre><code>Пользователь → Программа: Ввод данных
+Программа → Модуль проверки: Проверка корректности
+Модуль проверки → Программа: Результат
+Программа → Пользователь: Вывод отчёта</code></pre>
+    </section>
+
+    <section id="debug">
+      <h2>9. Отладка и тестирование</h2>
+      <p>В Visual Studio и VS Code используйте точки останова (breakpoints), окно <em>Watch</em> и шаги <em>Step Into/Over</em> для анализа выполнения.</p>
+      <pre><code class="language-cs">using System.Diagnostics;
+Debug.Assert(Sum(2, 3) == 5);</code></pre>
+      <h3>Типичные ошибки</h3>
+      <ul class="kv">
+        <li>деление на ноль (<code>DivideByZeroException</code>);</li>
+        <li>выход за границы массива;</li>
+        <li>обращение к <code>null</code>.</li>
+      </ul>
+    </section>
+
+    <section id="reuse">
+      <h2>10. Структуризация и повторное использование кода</h2>
+      <ul class="kv">
+        <li>используйте пространства имён (<code>namespace</code>);</li>
+        <li>делите проект на классы и файлы;</li>
+        <li>подключайте библиотеки (<code>using System.IO;</code>).</li>
+      </ul>
+
+      <pre><code class="language-cs">namespace MyApp.Utils
+{
+    public static class MathHelper
+    {
+        public static double Average(int[] nums)
+            =&gt; nums.Sum() / (double)nums.Length;
+    }
+}</code></pre>
+    </section>
+
+    <section id="assignment">
+      <h2>2. Выполнение задания</h2>
+
+      <h3>Описание задания</h3>
+      <ol>
+        <li>Выбрать предметную область (из списка в документе).</li>
+        <li>Проанализировать объект моделирования: определить основные сущности и их характеристики (например: книга, студент, товар, клиент, заказ).</li>
+        <li>Разработать UML-диаграмму классов, отражающую структуру данных и связи между объектами.</li>
+        <li>Создать консольное приложение, реализующее базовые функции:
+          <ul>
+            <li>добавление нового объекта в коллекцию;</li>
+            <li>просмотр всех записей;</li>
+            <li>поиск по ключевому полю (например, ID, фамилия, название);</li>
+            <li>редактирование и удаление данных;</li>
+            <li>сохранение и загрузка данных из файла (текстового или JSON).</li>
+          </ul>
+        </li>
+        <li>Реализовать в коде:
+          <ul>
+            <li>использование условных операторов (<code>if</code>, <code>switch</code>);</li>
+            <li>применение циклов (<code>for</code>, <code>while</code>, <code>foreach</code>);</li>
+            <li>написание функций и методов с параметрами и возвращаемыми значениями;</li>
+            <li>применение массивов, списков или коллекций;</li>
+            <li>создание классов и объектов, использование конструкторов, свойств, перегрузки методов.</li>
+          </ul>
+        </li>
+        <li>Провести отладку и тестирование программы: проверить корректность ввода данных, устойчивость к ошибкам, корректность расчётов.</li>
+        <li>Подготовить отчёт с описанием этапов работы:
+          <ul>
+            <li>анализ предметной области;</li>
+            <li>UML-диаграмма классов;</li>
+            <li>фрагменты исходного кода;</li>
+            <li>результаты тестирования (скриншоты работы программы);</li>
+            <li>выводы.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h3>Шаг 1. Анализ предметной области</h3>
+      <p><strong>Цель:</strong> определить, какие данные нужно хранить и как они связаны.</p>
+      <p><strong>Объект моделирования:</strong> система учёта студентов.</p>
+      <div class="scroll-x">
+        <table style="min-width:640px; border-collapse:collapse">
+          <thead>
+            <tr>
+              <th style="text-align:left; border-bottom:1px solid var(--line); padding:6px 4px">Сущность</th>
+              <th style="text-align:left; border-bottom:1px solid var(--line); padding:6px 4px">Атрибут</th>
+              <th style="text-align:left; border-bottom:1px solid var(--line); padding:6px 4px">Тип данных</th>
+              <th style="text-align:left; border-bottom:1px solid var(--line); padding:6px 4px">Пример</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Student</td><td>ID</td><td>int</td><td>1</td>
+            </tr>
+            <tr>
+              <td></td><td>FullName</td><td>string</td><td>Иванов Иван</td>
+            </tr>
+            <tr>
+              <td></td><td>Group</td><td>string</td><td>ИС-23</td>
+            </tr>
+            <tr>
+              <td></td><td>AverageGrade</td><td>double</td><td>4.5</td>
+            </tr>
+            <tr>
+              <td>Group</td><td>GroupName</td><td>string</td><td>ИС-23</td>
+            </tr>
+            <tr>
+              <td></td><td>Year</td><td>int</td><td>2025</td>
+            </tr>
+            <tr>
+              <td>Course</td><td>CourseName</td><td>string</td><td>Программирование</td>
+            </tr>
+            <tr>
+              <td></td><td>Hours</td><td>int</td><td>72</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Шаг 2. UML-диаграмма классов</h3>
+      <p>Диаграмма ниже рендерится автоматически из текста PlantUML (требуется интернет при просмотре документа).</p>
+      <pre class="plantuml">
+@startuml
+skinparam classAttributeIconSize 0
+class Student {
+    - int Id
+    - string FullName
+    - string Group
+    - double AverageGrade
+    + void ShowInfo()
+}
+class Group {
+    - string GroupName
+    - int Year
+}
+class Course {
+    - string CourseName
+    - int Hours
+}
+Group "1" -- "many" Student : включает
+Student "many" -- "many" Course : изучает
+@enduml
+      </pre>
+
+      <h3>Шаг 3. Создание проекта в Visual Studio</h3>
+      <ol>
+        <li>Откройте Visual Studio.</li>
+        <li>Выберите «Создать проект» → «Консольное приложение» (.NET 8 / .NET 6).</li>
+        <li>Назовите проект <code>StudentManager</code>.</li>
+        <li>Сохраните проект в папку <code>Учебная_практика_ПМ01</code>.</li>
+      </ol>
+
+      <h3>Шаг 4. Создание классов</h3>
+      <p><strong>Student.cs</strong></p>
+      <pre><code class="language-cs">public class Student
+{
+    public int Id { get; set; }
+    public string FullName { get; set; }
+    public string Group { get; set; }
+    public double AverageGrade { get; set; }
+
+    public void ShowInfo()
+    {
+        Console.WriteLine($"{Id}: {FullName}, группа {Group}, средний балл {AverageGrade}");
+    }
+}</code></pre>
+
+      <p><strong>Group.cs</strong></p>
+      <pre><code class="language-cs">public class Group
+{
+    public string GroupName { get; set; }
+    public int Year { get; set; }
+}</code></pre>
+
+      <p><strong>Course.cs</strong></p>
+      <pre><code class="language-cs">public class Course
+{
+    public string CourseName { get; set; }
+    public int Hours { get; set; }
+}</code></pre>
+
+      <h3>Шаг 5. Основной модуль программы (Program.cs)</h3>
+      <pre><code class="language-cs">using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.IO;
+
+class Program
+{
+    static List&lt;Student&gt; students = new List&lt;Student&gt;();
+    static string filePath = "students.json";
+
+    static void Main()
+    {
+        LoadData();
+
+        bool exit = false;
+        while (!exit)
+        {
+            Console.WriteLine("\n--- Меню управления студентами ---");
+            Console.WriteLine("1. Добавить студента");
+            Console.WriteLine("2. Показать всех студентов");
+            Console.WriteLine("3. Найти по ID");
+            Console.WriteLine("4. Редактировать данные");
+            Console.WriteLine("5. Удалить студента");
+            Console.WriteLine("6. Сохранить и выйти");
+            Console.Write("Выбор: ");
+            string choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1": AddStudent(); break;
+                case "2": ShowAll(); break;
+                case "3": FindStudent(); break;
+                case "4": EditStudent(); break;
+                case "5": DeleteStudent(); break;
+                case "6": SaveData(); exit = true; break;
+                default: Console.WriteLine("Неверный выбор."); break;
+            }
+        }
+    }</code></pre>
+
+      <h3>Шаг 6. Реализация функций</h3>
+      <p><strong>Добавление студента</strong></p>
+      <pre><code class="language-cs">static void AddStudent()
+{
+    Console.Write("Введите ID: ");
+    int id = int.Parse(Console.ReadLine());
+    Console.Write("Введите ФИО: ");
+    string name = Console.ReadLine();
+    Console.Write("Введите группу: ");
+    string group = Console.ReadLine();
+    Console.Write("Введите средний балл: ");
+    double grade = double.Parse(Console.ReadLine());
+
+    students.Add(new Student { Id = id, FullName = name, Group = group, AverageGrade = grade });
+    Console.WriteLine("Студент добавлен.");
+}</code></pre>
+
+      <p><strong>Просмотр всех</strong></p>
+      <pre><code class="language-cs">static void ShowAll()
+{
+    Console.WriteLine("\n--- Список студентов ---");
+    foreach (var s in students)
+        s.ShowInfo();
+}</code></pre>
+
+      <p><strong>Поиск</strong></p>
+      <pre><code class="language-cs">static void FindStudent()
+{
+    Console.Write("Введите ID студента: ");
+    int id = int.Parse(Console.ReadLine());
+    var s = students.Find(x =&gt; x.Id == id);
+    if (s != null) s.ShowInfo();
+    else Console.WriteLine("Студент не найден.");
+}</code></pre>
+
+      <p><strong>Редактирование</strong></p>
+      <pre><code class="language-cs">static void EditStudent()
+{
+    Console.Write("Введите ID для редактирования: ");
+    int id = int.Parse(Console.ReadLine());
+    var s = students.Find(x =&gt; x.Id == id);
+    if (s != null)
+    {
+        Console.Write("Новое имя: ");
+        s.FullName = Console.ReadLine();
+        Console.Write("Новая группа: ");
+        s.Group = Console.ReadLine();
+        Console.Write("Новый средний балл: ");
+        s.AverageGrade = double.Parse(Console.ReadLine());
+        Console.WriteLine("Данные обновлены.");
+    }
+    else Console.WriteLine("Студент не найден.");
+}</code></pre>
+
+      <p><strong>Удаление</strong></p>
+      <pre><code class="language-cs">static void DeleteStudent()
+{
+    Console.Write("Введите ID для удаления: ");
+    int id = int.Parse(Console.ReadLine());
+    students.RemoveAll(s =&gt; s.Id == id);
+    Console.WriteLine("Студент удалён.");
+}</code></pre>
+
+      <h3>Шаг 7. Работа с JSON-файлом</h3>
+      <p><strong>JSON</strong> — лёгкий текстовый формат хранения данных, используется для обмена между программами. Данные хранятся как пары «ключ–значение».</p>
+      <p>Пример JSON-файла:</p>
+      <pre><code class="language-json">[
+  {
+    "Id": 1,
+    "FullName": "Иванов Иван",
+    "Group": "ИС-23",
+    "AverageGrade": 4.5
+  },
+  {
+    "Id": 2,
+    "FullName": "Петров Пётр",
+    "Group": "ИС-23",
+    "AverageGrade": 3.9
+  }
+]</code></pre>
+
+      <p><strong>Создание JSON программно</strong></p>
+      <pre><code class="language-cs">static void SaveData()
+{
+    string json = JsonSerializer.Serialize(students, new JsonSerializerOptions { WriteIndented = true });
+    File.WriteAllText(filePath, json);
+    Console.WriteLine("Данные сохранены в students.json");
+}
+
+static void LoadData()
+{
+    if (File.Exists(filePath))
+    {
+        string json = File.ReadAllText(filePath);
+        students = JsonSerializer.Deserialize&lt;List&lt;Student&gt;&gt;(json);
+        Console.WriteLine("Данные загружены из файла.");
+    }
+}</code></pre>
+
+      <p>Справка:</p>
+      <ul>
+        <li><code>Serialize</code> — превращает коллекцию объектов в текст JSON;</li>
+        <li><code>Deserialize</code> — восстанавливает объекты из файла;</li>
+        <li><code>WriteIndented = true</code> — форматирует JSON для удобства чтения.</li>
+      </ul>
+      <p>После запуска программы файл <code>students.json</code> появится в папке проекта (<code>bin/Debug/net8.0/</code>).</p>
+
+      <h3>Шаг 8. Тестирование и отладка</h3>
+      <ol>
+        <li>Запустите программу клавишами <strong>Ctrl + F5</strong>.</li>
+        <li>Добавьте 2–3 студентов.</li>
+        <li>Перезапустите программу — убедитесь, что данные загружаются автоматически.</li>
+        <li>Проверьте функции поиска, редактирования и удаления.</li>
+        <li>Откройте файл <code>students.json</code> и убедитесь, что он содержит актуальные данные.</li>
+      </ol>
+      <p>Ссылка на тестовый проект: <a href="https://github.com/OlgaKraven/YP.PM.01-testProject.git" target="_blank" rel="noopener">GitHub — YP.PM.01-testProject</a></p>
+    </section>
+
+ 
+  </div>
+</body>
+</html>
